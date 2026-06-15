@@ -1,4 +1,4 @@
-# SENTINEL — Multi-Source Autonomous IR Correlation Agent
+# # SENTINEL + GHOST HUNTER — Autonomous IR & APT Attribution Agent
 ### FIND EVIL! Hackathon 2026 | SANS Institute
 
 > Stop asking one analyst. SENTINEL deploys history's most powerful forensic toolkit — automatically.
