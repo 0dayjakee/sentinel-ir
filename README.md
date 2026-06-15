@@ -9,6 +9,17 @@
 
 SENTINEL is an autonomous DFIR agent that analyzes forensic evidence across **multiple data sources simultaneously** — disk images, memory captures — and correlates findings to reconstruct the full attack timeline.
 
+GHOST HUNTER Extension:
+After SENTINEL identifies the evil, GHOST HUNTER autonomously 
+attributes the attack to a specific nation-state actor.
+
+On the SRL-2018 case, GHOST HUNTER identified:
+🎯 APT32 / OceanLotus (Vietnam) — 92% confidence
+- MITRE ATT&CK Group G-0047
+- C2 domain myvinhlong.com matches APT32 infrastructure
+- PHP/Wetbot.A matches APT32 known toolset
+- 5 matching TTPs confirmed
+
 Unlike single-source tools, SENTINEL:
 - **Correlates disk + memory** — catches discrepancies that single-source analysis misses
 - **Self-corrects in real time** — flags hallucinations and revises claims based on evidence
