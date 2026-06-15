@@ -112,7 +112,22 @@ python3 sentinel.py base-dc-cdrive.E01 base-dc-memory.raw SRL-2018-DC
   "artifact_timestamp": "2018-09-07T02:34:11Z"
 }
 ```
+## GHOST HUNTER — APT Attribution Engine
 
+After SENTINEL finds the evil, GHOST HUNTER identifies WHO did it.
+
+### Results on SRL-2018 Case
+🎯 **APT32 / OceanLotus (Vietnam)** — 92% confidence
+- MITRE ATT&CK Group: G-0047
+- C2 domain `myvinhlong.com` matches APT32 infrastructure
+- `PHP/Wetbot.A` matches APT32 known toolset
+- 5 matching TTPs confirmed
+
+### Run GHOST HUNTER
+```bash
+export GROQ_API_KEY=your_key_here
+python3 ghost_hunter.py
+```
 ---
 
 ## License
