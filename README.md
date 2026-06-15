@@ -65,7 +65,7 @@ The MCP tool layer physically cannot execute destructive operations.
 
 ```bash
 # On SIFT Workstation
-git clone https://github.com/YOUR_USERNAME/sentinel-ir.git
+git clone https://github.com/0dayjakee/sentinel-ir.git
 cd sentinel-ir
 bash install.sh
 export ANTHROPIC_API_KEY=your_key_here OR GroqCloud_api_key=your_key_here
