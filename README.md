@@ -74,13 +74,11 @@ The MCP tool layer physically cannot execute destructive operations.
 
 ## Installation
 
-```bash
-# On SIFT Workstation
 git clone https://github.com/0dayjakee/sentinel-ir.git
 cd sentinel-ir
-bash install.sh
-export ANTHROPIC_API_KEY=your_key_here OR GroqCloud_api_key=your_key_here
-```
+pip3 install groq reportlab --break-system-packages
+export GROQ_API_KEY=your_groq_api_key
+python3 sentinel_v2.py /path/to/memory.img CASE-001
 
 ## Usage
 
