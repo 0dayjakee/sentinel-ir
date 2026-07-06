@@ -1,4 +1,6 @@
-# # SENTINEL + GHOST HUNTER — Autonomous IR & APT Attribution Agent
+SENTINEL v2.0
+Autonomous Digital Forensic Investigation Operating System
+
 ### FIND EVIL! Hackathon 2026 | SANS Institute
 
 > Stop asking one analyst. SENTINEL deploys history's most powerful forensic toolkit — automatically.
