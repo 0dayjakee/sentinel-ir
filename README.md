@@ -75,9 +75,13 @@ The MCP tool layer physically cannot execute destructive operations.
 ## Installation
 
 git clone https://github.com/0dayjakee/sentinel-ir.git
+
 cd sentinel-ir
+
 pip3 install groq reportlab --break-system-packages
+
 export GROQ_API_KEY=your_groq_api_key
+
 python3 sentinel_v2.py /path/to/memory.img CASE-001
 
 ## Usage
