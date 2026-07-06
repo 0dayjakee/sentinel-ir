@@ -1,140 +1,254 @@
 # SENTINEL v2.0
 
-## Autonomous Digital Forensic Investigation Operating System
+### Autonomous Digital Forensic Investigation Operating System
 
-### FIND EVIL! Hackathon 2026 | SANS Institute
-
-> Stop asking one analyst. SENTINEL deploys history's most powerful forensic toolkit — automatically.
+**FIND EVIL! Hackathon 2026 | SANS Institute**
 
 ---
 
-## What It Does
+> Autonomously investigate digital evidence, correlate findings, validate conclusions, and generate executive-ready forensic reports—all from a single command.
 
-SENTINEL is an autonomous DFIR agent that analyzes forensic evidence across **multiple data sources simultaneously** — disk images, memory captures — and correlates findings to reconstruct the full attack timeline.
-
-GHOST HUNTER Extension:
-After SENTINEL identifies the evil, GHOST HUNTER autonomously 
-attributes the attack to a specific nation-state actor.
-
-On the SRL-2018 case, GHOST HUNTER identified:
-🎯 APT32 / OceanLotus (Vietnam) — 92% confidence
-- MITRE ATT&CK Group G-0047
-- C2 domain myvinhlong.com matches APT32 infrastructure
-- PHP/Wetbot.A matches APT32 known toolset
-- 5 matching TTPs confirmed
-
-Unlike single-source tools, SENTINEL:
-- **Correlates disk + memory** — catches discrepancies that single-source analysis misses
-- **Self-corrects in real time** — flags hallucinations and revises claims based on evidence
-- **Produces full audit trails** — every finding is traceable to a specific tool execution
-- **Enforces architectural guardrails** — destructive commands are blocked at the code level, not the prompt level
 
 ---
 
-## Architecture
+# What It Does
+
+**SENTINEL v2.0** is an **Autonomous Digital Forensic Investigation Operating System** that independently investigates digital evidence, correlates findings across multiple forensic sources, validates conclusions, and produces explainable, evidence-backed incident reports.
+
+Given forensic evidence such as memory captures or disk images, SENTINEL automatically:
+
+- Performs forensic triage
+- Extracts Indicators of Compromise (IOCs)
+- Correlates evidence across multiple sources
+- Maps attacker behavior to the MITRE ATT&CK framework
+- Identifies likely threat actors through infrastructure and behavioral correlation
+- Validates findings using evidence-driven consensus
+- Generates executive-ready investigation reports
+
+Unlike traditional AI assistants, SENTINEL does not simply answer analyst questions—it conducts the investigation autonomously.
+
+---
+
+# Key Capabilities
+
+- Autonomous digital forensic investigation
+- Multi-source evidence correlation
+- Memory forensic analysis
+- Threat attribution
+- MITRE ATT&CK mapping
+- Attack timeline reconstruction
+- Confidence scoring
+- Evidence validation
+- Anti-hallucination reasoning
+- Executive PDF reporting
+- Complete forensic audit trail
+
+---
+
+# Example Investigation
+
+### Case
+
+SRL-2018 Enterprise Compromise
+
+### Investigation Result
 
 ```
-┌─────────────────────────────────────────────────┐
-│                SENTINEL AGENT                   │
-│         (Claude claude-opus-4-5 + Tools)              │
-└──────────────────┬──────────────────────────────┘
-                   │
-    ┌──────────────┼──────────────────┐
-    ▼              ▼                  ▼
-┌────────┐  ┌──────────┐  ┌────────────────────┐
-│ DISK   │  │ MEMORY   │  │ CORRELATION ENGINE │
-│ Layer  │  │ Layer    │  │                    │
-│        │  │          │  │  Cross-reference   │
-│ ewfmnt │  │ vol3     │  │  disk vs memory    │
-│ fls    │  │ pslist   │  │  Flag discrepancy  │
-│ log2tl │  │ netscan  │  │  self_correct()    │
-│ rip.pl │  │ malfind  │  │                    │
-└────────┘  └──────────┘  └────────────────────┘
+Compromise Status
+✔ CONFIRMED
+
+Threat Actor
+APT32 / OceanLotus
+
+Confidence
+92%
+
+Evidence
+
+✔ C2 infrastructure correlation
+✔ PHP/Wetbot.A malware family
+✔ PowerShell persistence
+✔ 5 confirmed MITRE ATT&CK techniques
+✔ Infrastructure fingerprint matching
 ```
 
-## Analysis Phases
+---
 
-| Phase | Description | Tools Used |
-|-------|-------------|-----------|
-| 1. TRIAGE | Hash evidence, identify OS, time range | sha256, fls |
-| 2. DISK | Mount E01, list files, check persistence | ewfmount, fls, regripper |
-| 3. MEMORY | Process list, network, injected code | volatility3 |
-| 4. CORRELATION | Cross-reference disk+memory | Internal logic |
-| 5. SELF-CORRECTION | Audit every claim | self_correct() |
-| 6. REPORT | Timeline, TTPs, remediation | JSON report |
+# Investigation Pipeline
 
-## Security Guardrails
+```text
+Forensic Evidence
+(Disk / Memory)
+        │
+        ▼
+┌──────────────────────────────┐
+│          SENTINEL            │
+│ Memory & Artifact Analysis   │
+└──────────────────────────────┘
+              │
+              ▼
+┌──────────────────────────────┐
+│ Threat Attribution Engine    │
+│ Malware • Infrastructure     │
+│ MITRE • Behavioral Matching  │
+└──────────────────────────────┘
+              │
+              ▼
+┌──────────────────────────────┐
+│ Predictive Intelligence      │
+└──────────────────────────────┘
+              │
+              ▼
+┌──────────────────────────────┐
+│ Evidence Validation          │
+│ Challenge Every Finding      │
+└──────────────────────────────┘
+              │
+              ▼
+┌──────────────────────────────┐
+│ Consensus Engine             │
+│ Correlate • Verify • Score   │
+└──────────────────────────────┘
+              │
+              ▼
+ Executive Report + Timeline + MITRE ATT&CK
+```
 
-All guardrails are **architectural** — enforced in code, not prompts:
+---
+
+# Investigation Workflow
+
+| Phase | Description |
+|--------|-------------|
+| **Evidence Triage** | Hash verification, OS identification, forensic profiling |
+| **Artifact Analysis** | Registry, persistence, malware, filesystem analysis |
+| **Memory Analysis** | Processes, DLLs, injected code, network artifacts |
+| **Evidence Correlation** | Cross-reference all forensic artifacts |
+| **Threat Attribution** | Correlate malware, infrastructure, and ATT&CK techniques |
+| **Evidence Validation** | Challenge findings and resolve contradictions |
+| **Reporting** | Generate timelines, ATT&CK mapping, confidence scores, and executive reports |
+
+---
+
+# Security Architecture
+
+SENTINEL enforces security controls at the application layer.
+
+Potentially destructive operations are blocked before execution rather than relying on prompt instructions.
 
 ```python
-BLOCKED = ['rm ', 'dd ', 'shred', 'mkfs', 'wget ', 'curl ', '> /dev', 'chmod 777']
+BLOCKED_COMMANDS = [
+    "rm ",
+    "dd ",
+    "shred",
+    "mkfs",
+    "wget ",
+    "curl ",
+    "> /dev",
+    "chmod 777"
+]
 ```
 
-The MCP tool layer physically cannot execute destructive operations.
+This ensures forensic evidence remains immutable throughout the investigation.
 
 ---
 
-## Installation
+# Installation
 
-git clone https://github.com/0dayjakee/sentinel-ir.git
-
-cd sentinel-ir
-
-pip3 install groq reportlab --break-system-packages
-
-export GROQ_API_KEY=your_groq_api_key
-
-python3 sentinel_v2.py /path/to/memory.img CASE-001
-
-## Usage
+## Clone the repository
 
 ```bash
-# Basic usage
-python3 sentinel.py /cases/evidence/disk.E01 /cases/evidence/memory.raw CASE-001
-
-# With custom case ID
-python3 sentinel.py base-dc-cdrive.E01 base-dc-memory.raw SRL-2018-DC
+git clone https://github.com/0dayjakee/sentinel-ir.git
+cd sentinel-ir
 ```
 
-## Output
+## Install dependencies
 
-```
-/cases/CASE-001/
-├── sentinel_report.json    # Structured findings + audit trail
-└── sentinel_audit.log      # Every tool call logged
+```bash
+pip3 install groq reportlab --break-system-packages
 ```
 
-## Sample Finding
+## Configure your API key
+
+```bash
+export GROQ_API_KEY=your_groq_api_key
+```
+
+---
+
+# Quick Start
+
+Run a complete autonomous investigation with a single command.
+
+```bash
+python3 sentinel_v2.py /path/to/memory.img CASE-001
+```
+
+### Example
+
+```bash
+python3 sentinel_v2.py ~/base-dc-memory.img SRL-2018-DC
+```
+
+During execution, SENTINEL automatically performs:
+
+- Memory forensic analysis
+- IOC extraction
+- Threat attribution
+- Evidence validation
+- MITRE ATT&CK mapping
+- Confidence scoring
+- Executive PDF generation
+
+No additional commands are required.
+
+---
+
+# Generated Output
+
+```text
+cases/
+└── CASE-001/
+    ├── sentinel_report.json
+    ├── sentinel_audit.log
+    └── sentinel_v2_executive_report.pdf
+```
+
+| Artifact | Description |
+|----------|-------------|
+| **sentinel_report.json** | Structured forensic findings |
+| **sentinel_audit.log** | Complete investigation audit trail |
+| **sentinel_v2_executive_report.pdf** | Executive-ready forensic report |
+
+---
+
+# Sample Finding
 
 ```json
 {
   "id": "F001",
-  "type": "persistence",
-  "description": "CONFIRMED: Malicious DLL found in HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run via regripper output. Cross-referenced with memory: process loaded at same timestamp.",
-  "evidence_source": "run_regripper(SYSTEM hive) + run_volatility(windows.handles)",
-  "confidence": "high",
-  "artifact_timestamp": "2018-09-07T02:34:11Z"
+  "type": "Persistence",
+  "confidence": "95%",
+  "description": "Malicious DLL persistence confirmed through registry and memory correlation.",
+  "evidence": [
+    "Registry Run Key",
+    "Volatility Process Scan"
+  ],
+  "mitre": "T1547.001",
+  "timestamp": "2018-09-07T02:34:11Z"
 }
 ```
-## GHOST HUNTER — APT Attribution Engine
 
-After SENTINEL finds the evil, GHOST HUNTER identifies WHO did it.
-
-### Results on SRL-2018 Case
-🎯 **APT32 / OceanLotus (Vietnam)** — 92% confidence
-- MITRE ATT&CK Group: G-0047
-- C2 domain `myvinhlong.com` matches APT32 infrastructure
-- `PHP/Wetbot.A` matches APT32 known toolset
-- 5 matching TTPs confirmed
-
-### Run GHOST HUNTER
-```bash
-export GROQ_API_KEY=your_key_here
-python3 ghost_hunter.py
-```
 ---
 
-## License
+# Why SENTINEL?
 
-MIT License — Built for the FIND EVIL! Hackathon 2026
+Traditional DFIR tools assist investigators.
+
+SENTINEL performs the investigation.
+
+It autonomously analyzes forensic evidence, correlates artifacts across multiple sources, validates every conclusion, attributes attacker activity, and produces explainable, evidence-backed reports with a complete audit trail.
+
+Security teams don't need another AI chatbot.
+
+They need an autonomous investigator.
