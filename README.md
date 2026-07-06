@@ -1,5 +1,6 @@
-SENTINEL v2.0
-Autonomous Digital Forensic Investigation Operating System
+# SENTINEL v2.0
+
+## Autonomous Digital Forensic Investigation Operating System
 
 ### FIND EVIL! Hackathon 2026 | SANS Institute
 
