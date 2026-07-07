@@ -173,7 +173,7 @@ pip3 install groq reportlab --break-system-packages
 ```bash
 export GROQ_API_KEY=your_groq_api_key
 ```
-
+you need to log in here: https://console.groq.com/keys
 ---
 
 # Quick Start
@@ -189,6 +189,10 @@ python3 sentinel_v2.py /path/to/memory.img CASE-001
 ```bash
 python3 sentinel_v2.py ~/base-dc-memory.img SRL-2018-DC
 ```
+
+'''AND FOR PDF CONVERTION TYPE THIS COMMAND:
+start "C:\Users\ADMIN\sentinel_report.pdf"
+
 
 During execution, SENTINEL automatically performs:
 
