@@ -190,7 +190,8 @@ python3 sentinel_v2.py /path/to/memory.img CASE-001
 python3 sentinel_v2.py ~/base-dc-memory.img SRL-2018-DC
 ```
 
-'''AND FOR PDF CONVERTION TYPE THIS COMMAND:
+''' AND FOR PDF CONVERTION:
+
 start "C:\Users\ADMIN\sentinel_report.pdf"
 
 
