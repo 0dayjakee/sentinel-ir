@@ -406,4 +406,4 @@ Users are responsible for ensuring they have appropriate authorization before an
 
 **SANS Institute — FIND EVIL Hackathon 2026**
 
-Created by **Jake Sales**
+Created by **Rofer Jhayke Sales**
