@@ -402,8 +402,6 @@ Users are responsible for ensuring they have appropriate authorization before an
 
 ---
 
-## Built for
 
-**SANS Institute — FIND EVIL Hackathon 2026**
-
-Created by **Rofer Jhayke Sales**
+Created by
+**Rofer Jhayke Sales - Senior Cyber Defense Manager**
