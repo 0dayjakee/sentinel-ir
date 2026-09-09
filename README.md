@@ -4,7 +4,7 @@
 
 > **FIND EVIL. VERIFY EVERYTHING. TRUST EVIDENCE.**
 
-Built for the **SANS Institute – FIND EVIL Hackathon 2026**
+Built in silenc, Roar like a Lion!
 
 ---
 
