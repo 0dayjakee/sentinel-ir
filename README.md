@@ -4,7 +4,7 @@
 
 > **FIND EVIL. VERIFY EVERYTHING. TRUST EVIDENCE.**
 
-Built in silenc, Roar like a Lion!
+Built in silence, Roar like a Lion!
 
 ---
 
