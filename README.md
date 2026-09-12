@@ -2,7 +2,7 @@
 
 ## Autonomous Digital Forensic Investigation Operating System
 <div align="center">
-  <img src=https://github.com/0dayjake/sentinel-ir/raw/main/sentinel.png alt="The Sentinel Banner" width="100%">
+  <img src="https://github.com/0dayjakee/sentinel-ir/blob/9d9ffc9f6009bd5ac156011e1e73cbc0c1ceff48/sentinel.png" alt="The Sentinel Banner" width="100%">
 </div>
 
 <br>
