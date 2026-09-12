@@ -6,7 +6,7 @@
 </div>
 
 <br>
-> **FIND EVIL. VERIFY EVERYTHING. TRUST EVIDENCE.**
+**FIND EVIL. VERIFY EVERYTHING. TRUST EVIDENCE.**
 
 Built in silence, Roar like a Lion!
 
@@ -407,6 +407,6 @@ Users are responsible for ensuring they have appropriate authorization before an
 ---
 
 
-Created by
+Created by;
 
-**Rofer Jhayke Sales**
+**Rofer Jhayke Sales - Ethical Hacker / Security Researcher**
