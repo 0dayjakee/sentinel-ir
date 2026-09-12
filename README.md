@@ -1,7 +1,11 @@
 🛡️ SENTINEL v2.0
 
 ## Autonomous Digital Forensic Investigation Operating System
+<div align="center">
+  <img src="https://github.com/0dayjake/sentinel-ir/raw/main/sentinel.png" alt="The Sentinel Banner" width="100%">
+</div>
 
+<br>
 > **FIND EVIL. VERIFY EVERYTHING. TRUST EVIDENCE.**
 
 Built in silence, Roar like a Lion!
