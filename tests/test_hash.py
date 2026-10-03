@@ -15,7 +15,7 @@ def _load_legacy(monkeypatch):
     monkeypatch.setitem(sys.modules, "google.generativeai", genai)
 
     spec = importlib.util.spec_from_file_location(
-        "sentinel_legacy", Path("sentinel.py")
+        "sentinel_legacy", Path("sentinel_legacy.py")
     )
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)  # type: ignore[union-attr]

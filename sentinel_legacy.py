@@ -151,11 +151,16 @@ End with a complete executive summary."""
     post_hash = custody.sha256_file(memory_path)
     _audit("evidence_hash_post", path=memory_path, sha256=post_hash)
     logger.info("evidence sha256 post=%s unchanged=%s", post_hash, post_hash == pre_hash)
+    if post_hash != pre_hash:
+        logger.critical("INTEGRITY VIOLATION: evidence changed pre=%s post=%s path=%s",
+                        pre_hash, post_hash, memory_path)
+        _audit("integrity_violation", path=memory_path, pre=pre_hash, post=post_hash)
     report = {
         "case": case_name,
         "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "evidence": {"path": memory_path, "sha256_pre": pre_hash,
-                     "sha256_post": post_hash, "unchanged": pre_hash == post_hash},
+                     "sha256_post": post_hash, "unchanged": pre_hash == post_hash,
+                     "integrity_violation": pre_hash != post_hash},
         "summary": {"total_findings": len(findings), "self_corrections": len(corrections)},
         "findings": findings,
         "corrections": corrections,
@@ -170,6 +175,6 @@ End with a complete executive summary."""
 if __name__ == "__main__":
     import sys
     if len(sys.argv) < 2:
-        print("Usage: python3 sentinel.py <memory.img> [CASE-ID]")
+        print("Usage: python3 sentinel_legacy.py <memory.img> [CASE-ID]")
         sys.exit(1)
     run_sentinel(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else "CASE-001")

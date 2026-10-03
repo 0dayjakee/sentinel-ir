@@ -17,7 +17,7 @@ def _load(monkeypatch):
     monkeypatch.setitem(sys.modules, "google", google)
     monkeypatch.setitem(sys.modules, "google.generativeai", genai)
     spec = importlib.util.spec_from_file_location(
-        "sentinel_legacy", Path("sentinel.py")
+        "sentinel_legacy", Path("sentinel_legacy.py")
     )
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)  # type: ignore[union-attr]
@@ -57,9 +57,13 @@ def test_run_sentinel_end_to_end(tmp_path, monkeypatch, tamper):
     report = json.loads((case / "sentinel_report.json").read_text())
     events = [e["event"] for e in report["audit_trail"]]
     assert events[0] == "evidence_hash_pre"
-    assert events[-1] == "evidence_hash_post"
+    assert "evidence_hash_post" in events
+    assert ("integrity_violation" in events) is tamper
+    if tamper:
+        assert events.index("integrity_violation") > events.index("evidence_hash_post")
     assert "hash" in events and "finding" in events
     assert report["evidence"]["unchanged"] is (not tamper)
+    assert report["evidence"]["integrity_violation"] is tamper
     assert (case / "SHA256SUMS").exists()
     assert (case / "audit.log").exists()
 
