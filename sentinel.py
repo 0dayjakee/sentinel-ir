@@ -9,6 +9,7 @@ from pathlib import Path
 import google.generativeai as genai
 
 from sentinel.safe_exec import safe_run
+from sentinel.safe_tools import grep_tree, strings_grep
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s', handlers=[logging.FileHandler('sentinel_audit.log'), logging.StreamHandler()])
 logger = logging.getLogger('SENTINEL')
@@ -30,8 +31,8 @@ def run_volatility(memory_path: str, plugin: str, args: str = "") -> str:
 def run_strings(file_path: str, grep_pattern: str = "") -> str:
     """Extract strings from a file, optionally filtered"""
     if grep_pattern:
-        return safe_run(['bash', '-c', f'strings -n 6 "{file_path}" | grep -iE "{grep_pattern}" | head -50'])
-    return safe_run(['strings', '-n', '6', file_path])
+        return strings_grep(file_path, grep_pattern)
+    return strings_grep(file_path)
 
 def calculate_hash(file_path: str, algorithm: str = "sha256") -> str:
     """Calculate hash of evidence file"""
@@ -41,12 +42,12 @@ def calculate_hash(file_path: str, algorithm: str = "sha256") -> str:
             for chunk in iter(lambda: f.read(65536), b''):
                 h.update(chunk)
         return f"{algorithm.upper()}: {h.hexdigest()}"
-    except Exception as e:
+    except (OSError, ValueError) as e:
         return f"ERROR: {e}"
 
 def search_iocs(path: str, pattern: str) -> str:
     """Search for IOCs in a file"""
-    return safe_run(['grep', '-r', '-i', '-m', '20', pattern, path])
+    return grep_tree(pattern, path)
 
 def write_finding(finding_type: str, description: str, evidence_source: str, confidence: str, artifact_timestamp: str = "") -> str:
     """Record a confirmed forensic finding"""

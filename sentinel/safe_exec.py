@@ -17,20 +17,45 @@ ALLOWED_ROOTS = tuple(
 
 VOL_PLUGINS = frozenset(
     {
-        "windows.info", "windows.pslist", "windows.psscan", "windows.pstree",
-        "windows.psxview", "windows.cmdline", "windows.envars", "windows.dlllist",
-        "windows.ldrmodules", "windows.handles", "windows.netscan", "windows.netstat",
-        "windows.malfind", "windows.svcscan", "windows.filescan",
-        "windows.registry.hivelist", "windows.registry.printkey",
-        "linux.pslist", "linux.pstree", "linux.bash", "linux.sockstat", "linux.malfind",
+        "windows.info",
+        "windows.pslist",
+        "windows.psscan",
+        "windows.pstree",
+        "windows.psxview",
+        "windows.cmdline",
+        "windows.envars",
+        "windows.dlllist",
+        "windows.ldrmodules",
+        "windows.handles",
+        "windows.netscan",
+        "windows.netstat",
+        "windows.malfind",
+        "windows.svcscan",
+        "windows.filescan",
+        "windows.registry.hivelist",
+        "windows.registry.printkey",
+        "linux.pslist",
+        "linux.pstree",
+        "linux.bash",
+        "linux.sockstat",
+        "linux.malfind",
     }
 )
 
 # Flags na pwedeng magsulat sa labas o mag-load ng code/symbols mula sa labas
 VOL_DENIED_FLAGS = frozenset(
     {
-        "-o", "--output-dir", "-p", "--plugin-dirs", "-s", "--symbol-dirs",
-        "--cache-path", "--write-config", "--save-config", "--clear-cache", "--dump",
+        "-o",
+        "--output-dir",
+        "-p",
+        "--plugin-dirs",
+        "-s",
+        "--symbol-dirs",
+        "--cache-path",
+        "--write-config",
+        "--save-config",
+        "--clear-cache",
+        "--dump",
     }
 )
 
@@ -45,7 +70,7 @@ def _path_allowed(arg: str) -> bool:
         return True
     try:
         resolved = Path(value).expanduser().resolve()
-    except (OSError, RuntimeError):
+    except (OSError, RuntimeError, ValueError):
         return False
     return any(resolved.is_relative_to(root) for root in ALLOWED_ROOTS)
 

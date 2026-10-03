@@ -144,6 +144,6 @@ def main() -> int:
         parser.print_help()
         return 1
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - top-level CLI boundary
         print(f"[!] SENTINEL ERROR: {exc}", file=sys.stderr)
         return 1
