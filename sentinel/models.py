@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field, asdict
+import json
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-import json
 
 
 def utc_now() -> str:
@@ -70,18 +70,12 @@ class Case:
         )
 
     @classmethod
-    def load(cls, path: Path) -> "Case":
+    def load(cls, path: Path) -> Case:
         data = json.loads(path.read_text(encoding="utf-8"))
 
-        evidence = [
-            Evidence(**item)
-            for item in data.get("evidence", [])
-        ]
+        evidence = [Evidence(**item) for item in data.get("evidence", [])]
 
-        findings = [
-            Finding(**item)
-            for item in data.get("findings", [])
-        ]
+        findings = [Finding(**item) for item in data.get("findings", [])]
 
         return cls(
             case_id=data["case_id"],

@@ -5,7 +5,6 @@ from pathlib import Path
 from .evidence import evidence_metadata
 from .models import Case
 
-
 DEFAULT_CASE_ROOT = Path("/cases")
 
 
@@ -39,8 +38,6 @@ def load_case(
     path = case_root / case_id / "case.json"
 
     if not path.exists():
-        raise FileNotFoundError(
-            f"Case not found: {case_id}"
-        )
+        raise FileNotFoundError(f"Case not found: {case_id}")
 
     return Case.load(path)

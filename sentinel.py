@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
-import os, json, subprocess, logging, hashlib, datetime
+import datetime
+import hashlib
+import json
+import logging
+import os
+import subprocess
 from pathlib import Path
+
 import google.generativeai as genai
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s', handlers=[logging.FileHandler('sentinel_audit.log'), logging.StreamHandler()])

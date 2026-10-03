@@ -5,12 +5,11 @@ Extension of SENTINEL | FIND EVIL! Hackathon 2026 | SANS Institute
 Author: Jhayke Sales
 """
 
-import os
-import json
-import subprocess
-import hashlib
 import datetime
+import json
+import os
 from pathlib import Path
+
 from groq import Groq
 
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
@@ -111,7 +110,7 @@ def run_ghost_hunter(sentinel_findings: dict, case_name: str = "CASE-001"):
     top_apt = max(scores, key=scores.get)
     top_score = scores[top_apt]
     
-    print(f"\n[Phase 2] AI-powered deep attribution analysis...")
+    print("\n[Phase 2] AI-powered deep attribution analysis...")
     
     evidence_str = json.dumps(sentinel_findings, indent=2)
     scores_str = json.dumps(scores, indent=2)
@@ -169,7 +168,7 @@ Be specific about WHY each indicator points to a specific group.'''}],
     print(f"\n🎯 TOP ATTRIBUTION: {top_apt} ({APT_SIGNATURES[top_apt]['nation']})")
     print(f"   Confidence: {top_score}%")
     print(f"   Aliases: {', '.join(APT_SIGNATURES[top_apt]['aliases'])}")
-    print(f"\n📋 KEY EVIDENCE:")
+    print("\n📋 KEY EVIDENCE:")
     for r in reasons[top_apt]:
         print(f"   • {r}")
     print(f"\n🤖 AI DEEP ANALYSIS:\n{ai_analysis}")
