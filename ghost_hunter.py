@@ -142,7 +142,7 @@ Be specific about WHY each indicator points to a specific group.'''}],
     # Generate final report
     report = {
         "case": case_name,
-        "generated_at": datetime.datetime.now().isoformat(),
+        "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "sentinel_findings": sentinel_findings,
         "attribution_scores": scores,
         "top_attribution": {

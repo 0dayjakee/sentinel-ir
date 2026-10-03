@@ -61,14 +61,14 @@ def search_iocs(path: str, pattern: str) -> str:
 
 def write_finding(finding_type: str, description: str, evidence_source: str, confidence: str, artifact_timestamp: str = "") -> str:
     """Record a confirmed forensic finding"""
-    f = {"id": f"F{len(findings)+1:03d}", "logged_at": datetime.datetime.now().isoformat(), "artifact_timestamp": artifact_timestamp, "type": finding_type, "description": description, "evidence_source": evidence_source, "confidence": confidence}
+    f = {"id": f"F{len(findings)+1:03d}", "logged_at": datetime.datetime.now(datetime.timezone.utc).isoformat(), "artifact_timestamp": artifact_timestamp, "type": finding_type, "description": description, "evidence_source": evidence_source, "confidence": confidence}
     findings.append(f)
     logger.info(f"FINDING [{f['id']}] [{confidence.upper()}] {finding_type}: {description[:80]}")
     return f"Recorded {f['id']}"
 
 def self_correct(original_claim: str, correction: str, evidence: str) -> str:
     """Flag an incorrect claim and record correction"""
-    corrections.append({"timestamp": datetime.datetime.now().isoformat(), "original": original_claim, "correction": correction, "evidence": evidence})
+    corrections.append({"timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat(), "original": original_claim, "correction": correction, "evidence": evidence})
     logger.warning(f"CORRECTION #{len(corrections)}: {original_claim[:60]}")
     return f"Correction #{len(corrections)} recorded"
 
@@ -121,7 +121,7 @@ End with a complete executive summary."""
 
     case_dir = Path(f"/cases/{case_name}")
     case_dir.mkdir(parents=True, exist_ok=True)
-    report = {"case": case_name, "generated_at": datetime.datetime.now().isoformat(), "summary": {"total_findings": len(findings), "self_corrections": len(corrections)}, "findings": findings, "corrections": corrections, "audit_trail": audit_trail}
+    report = {"case": case_name, "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(), "summary": {"total_findings": len(findings), "self_corrections": len(corrections)}, "findings": findings, "corrections": corrections, "audit_trail": audit_trail}
     with open(case_dir / "sentinel_report.json", 'w') as f:
         json.dump(report, f, indent=2)
     print(f"\n✅ Report saved: /cases/{case_name}/sentinel_report.json")
