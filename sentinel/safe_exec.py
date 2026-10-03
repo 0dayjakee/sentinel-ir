@@ -56,10 +56,17 @@ VOL_DENIED_FLAGS = frozenset(
         "--save-config",
         "--clear-cache",
         "--dump",
+        "-c",
+        "--config",
+        "--remote-isf-url",
+        "--single-location",
+        "--virtmap-cache-path",
+        "-f",
+        "--file",
     }
 )
 
-MAX_OUTPUT = 4000
+MAX_OUTPUT = 20000
 TIMEOUT_S = 120
 
 
@@ -81,7 +88,7 @@ def _is_denied_flag(arg: str) -> bool:
     if arg.split("=", 1)[0] in VOL_DENIED_FLAGS:
         return True
     # combined short form, e.g. -o/tmp
-    return not arg.startswith("--") and arg[:2] in {"-o", "-p", "-s"}
+    return not arg.startswith("--") and arg[:2] in {"-o", "-p", "-s", "-c", "-f"}
 
 
 def _validate(argv: Sequence[str]) -> str | None:
@@ -93,6 +100,8 @@ def _validate(argv: Sequence[str]) -> str | None:
     if binary == "vol":
         if len(argv) < 4 or argv[1] != "-f":
             return "vol must be: vol -f <image> <plugin> [args]"
+        if not Path(argv[2]).is_absolute():
+            return "vol image path must be absolute"
         if argv[3] not in VOL_PLUGINS:
             return f"vol plugin '{argv[3]}' not allowed"
         if any(_is_denied_flag(a) for a in argv[4:]):

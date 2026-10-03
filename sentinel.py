@@ -25,7 +25,9 @@ def run_volatility(memory_path: str, plugin: str, args: str = "") -> str:
     cmd = ['vol', '-f', memory_path, plugin]
     if args: cmd += args.split()
     out = safe_run(cmd)
-    logger.info(f"vol {plugin} -> {out[:80]}")
+    logger.info("vol argv=%s -> %s", cmd, out[:80].replace("\n", " "))
+    if out.startswith("BLOCKED"):
+        logger.warning("vol call BLOCKED argv=%s", cmd)
     return out
 
 def run_strings(file_path: str, grep_pattern: str = "") -> str:

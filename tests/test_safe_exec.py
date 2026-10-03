@@ -41,3 +41,42 @@ def test_safe_run_blocked(argv):
     from sentinel.safe_exec import safe_run
 
     assert safe_run(argv).startswith("BLOCKED")
+
+
+@pytest.mark.parametrize(
+    "argv",
+    [
+        ["vol", "-f", "image.raw", "windows.pslist"],
+        ["vol", "-f", "/cases/x.raw", "windows.pslist", "-c", "/tmp/evil.json"],
+        ["vol", "-f", "/cases/x.raw", "windows.pslist", "--config=/tmp/evil.json"],
+        [
+            "vol",
+            "-f",
+            "/cases/x.raw",
+            "windows.pslist",
+            "--remote-isf-url",
+            "http://evil/x",
+        ],
+        ["vol", "-f", "/cases/x.raw", "windows.pslist", "-f", "/etc/passwd"],
+        [
+            "vol",
+            "-f",
+            "/cases/x.raw",
+            "windows.pslist",
+            "--single-location=http://evil",
+        ],
+    ],
+)
+def test_vol_more_bypasses(argv):
+    from sentinel.safe_exec import safe_run
+
+    assert safe_run(argv).startswith("BLOCKED")
+
+
+def test_vol_args_split_shape_is_safe():
+    """Same shape as run_volatility: cmd + args.split() from an LLM string."""
+    from sentinel.safe_exec import safe_run
+
+    args = "--pid 4 ; rm -rf /cases && -o /tmp"
+    cmd = ["vol", "-f", "/cases/x.raw", "windows.pslist", *args.split()]
+    assert safe_run(cmd).startswith("BLOCKED")
