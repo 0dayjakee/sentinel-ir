@@ -80,3 +80,23 @@ def test_vol_args_split_shape_is_safe():
     args = "--pid 4 ; rm -rf /cases && -o /tmp"
     cmd = ["vol", "-f", "/cases/x.raw", "windows.pslist", *args.split()]
     assert safe_run(cmd).startswith("BLOCKED")
+
+
+def test_vol_flag_in_plugin_position_blocked():
+    from sentinel.safe_exec import safe_run
+
+    assert safe_run(
+        ["vol", "-f", "/cases/x.raw", "-c", "/tmp/e.json", "windows.pslist"]
+    ).startswith("BLOCKED")
+
+
+def test_vol_valid_call_passes_validation(monkeypatch, tmp_path):
+    """Valid call dapat pumasa sa _validate (hindi tumatakbo ang vol)."""
+    from sentinel import safe_exec
+
+    monkeypatch.setattr(safe_exec, "ALLOWED_ROOTS", (tmp_path.resolve(),))
+    img = tmp_path / "x.raw"
+    assert (
+        safe_exec._validate(["vol", "-f", str(img), "windows.pslist", "--pid", "4"])
+        is None
+    )
