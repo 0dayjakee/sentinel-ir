@@ -89,7 +89,7 @@ def grep_tree(pattern: str, path: str) -> str:
         return "BLOCKED: pattern too long"
     try:
         grep = subprocess.Popen(  # nosec B603, B607
-            ["grep", "-r", "-i", "-m", "20", "-e", pattern, str(target)],
+            ["grep", "-r", "-a", "-i", "-m", "20", "-e", pattern, str(target)],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
