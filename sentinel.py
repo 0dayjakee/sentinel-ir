@@ -4,31 +4,20 @@ import hashlib
 import json
 import logging
 import os
-import subprocess
 from pathlib import Path
 
 import google.generativeai as genai
+
+from sentinel.safe_exec import safe_run
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(message)s', handlers=[logging.FileHandler('sentinel_audit.log'), logging.StreamHandler()])
 logger = logging.getLogger('SENTINEL')
 
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
-BLOCKED = ['rm ', 'dd ', 'shred', 'mkfs', '> /dev', 'chmod 777']
 findings = []
 audit_trail = []
 corrections = []
-
-def safe_run(cmd):
-    cmd_str = ' '.join(str(c) for c in cmd)
-    for b in BLOCKED:
-        if b in cmd_str:
-            return f"BLOCKED: {b}"
-    try:
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
-        return (r.stdout or r.stderr or "(no output)")[:4000]
-    except Exception as e:
-        return f"ERROR: {e}"
 
 def run_volatility(memory_path: str, plugin: str, args: str = "") -> str:
     """Run a Volatility 3 plugin against a memory image"""
