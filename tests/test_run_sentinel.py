@@ -36,8 +36,9 @@ def test_run_sentinel_end_to_end(tmp_path, monkeypatch, tamper):
 
     class Chat:
         def send_message(self, prompt):
-            mod.calculate_hash(str(img))
-            mod.write_finding("test", "desc", "calculate_hash", "high")
+            out = mod.calculate_hash(str(img))
+            ref = out.rsplit("evidence_ref: ", 1)[1].rstrip("]")
+            mod.write_finding("test", "desc", "calculate_hash", "high", ref)
             if tamper:
                 img.write_bytes(b"y" * 4096)
             return Resp()
@@ -70,3 +71,43 @@ def test_bad_case_name_rejected(tmp_path, monkeypatch):
     mod = _load(monkeypatch)
     with pytest.raises(ValueError):
         mod.run_sentinel(str(img), "../../tmp/x")
+
+
+def test_finding_rejected_with_unknown_ref(monkeypatch):
+    mod = _load(monkeypatch)
+    out = mod.write_finding("t", "d", "made up", "high", "E9999")
+    assert out.startswith("REJECTED")
+    assert mod.findings == []
+
+
+def test_finding_rejected_when_cited_call_was_blocked(monkeypatch):
+    mod = _load(monkeypatch)
+    out = mod.run_volatility(
+        "relative.raw", "windows.pslist"
+    )  # BLOCKED, hindi tumatakbo ang vol
+    assert out.startswith("BLOCKED")
+    assert "evidence_ref" not in out
+    ref = mod.audit_trail[-1]["ref"]
+    assert mod.write_finding("t", "d", "x", "high", ref).startswith("REJECTED")
+    assert mod.findings == []
+
+
+def test_finding_rejected_when_citing_a_finding_event(monkeypatch, tmp_path):
+    mod = _load(monkeypatch)
+    f = tmp_path / "a.bin"
+    f.write_bytes(b"abc")
+    ref = mod.calculate_hash(str(f)).rsplit("evidence_ref: ", 1)[1].rstrip("]")
+    assert mod.write_finding("t", "d", "hash", "high", ref).startswith("Recorded")
+    finding_ref = next(e["ref"] for e in mod.audit_trail if e["event"] == "finding")
+    assert mod.write_finding("t2", "d2", "x", "high", finding_ref).startswith(
+        "REJECTED"
+    )
+
+
+def test_finding_accepted_with_hash_ref(monkeypatch, tmp_path):
+    mod = _load(monkeypatch)
+    f = tmp_path / "a.bin"
+    f.write_bytes(b"abc")
+    ref = mod.calculate_hash(str(f)).rsplit("evidence_ref: ", 1)[1].rstrip("]")
+    assert mod.write_finding("t", "d", "hash", "high", ref).startswith("Recorded")
+    assert mod.findings[0]["evidence_ref"] == ref

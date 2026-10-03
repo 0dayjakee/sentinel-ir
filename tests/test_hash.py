@@ -34,6 +34,8 @@ def test_calculate_hash_md5_and_error_paths(tmp_path, monkeypatch):
     f = tmp_path / "e.bin"
     f.write_bytes(b"abc")
     mod = _load_legacy(monkeypatch)
-    assert mod.calculate_hash(str(f), "md5") == "MD5: 900150983cd24fb0d6963f7d28e17f72"
+    assert mod.calculate_hash(str(f), "md5").startswith(
+        "MD5: 900150983cd24fb0d6963f7d28e17f72"
+    )
     assert mod.calculate_hash(str(tmp_path / "missing.bin")).startswith("ERROR")
     assert mod.calculate_hash(str(f), "notanalgo").startswith("ERROR")

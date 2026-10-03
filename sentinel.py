@@ -21,27 +21,41 @@ audit_trail = []
 corrections = []
 
 
-def _audit(event: str, **data) -> None:
+def _audit(event: str, **data) -> str:
     ts = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    audit_trail.append({"ts": ts, "event": event, **data})
+    ref = f"E{len(audit_trail) + 1:04d}"
+    audit_trail.append({"ref": ref, "ts": ts, "event": event, **data})
+    return ref
+
+
+_GROUNDING_EVENTS = {"vol", "strings", "grep", "hash"}
+
+
+def _failed(out: str) -> bool:
+    return out.startswith(("BLOCKED", "ERROR"))
+
+
+def _tag(out: str, ref: str) -> str:
+    return out if _failed(out) else f"{out}\n[evidence_ref: {ref}]"
 
 def run_volatility(memory_path: str, plugin: str, args: str = "") -> str:
     """Run a Volatility 3 plugin against a memory image"""
     cmd = ['vol', '-f', memory_path, plugin]
     if args: cmd += args.split()
     out = safe_run(cmd)
-    _audit("vol", argv=cmd, blocked=out.startswith("BLOCKED"),
+    ref = _audit("vol", argv=cmd, blocked=_failed(out),
            output_sha256=hashlib.sha256(out.encode()).hexdigest())
     logger.info("vol argv=%s -> %s", cmd, out[:80].replace("\n", " "))
     if out.startswith("BLOCKED"):
         logger.warning("vol call BLOCKED argv=%s", cmd)
-    return out
+    return _tag(out, ref)
 
 def run_strings(file_path: str, grep_pattern: str = "") -> str:
     """Extract strings from a file, optionally filtered"""
-    if grep_pattern:
-        return strings_grep(file_path, grep_pattern)
-    return strings_grep(file_path)
+    out = strings_grep(file_path, grep_pattern) if grep_pattern else strings_grep(file_path)
+    ref = _audit("strings", path=file_path, pattern=grep_pattern, blocked=_failed(out),
+                 output_sha256=hashlib.sha256(out.encode()).hexdigest())
+    return _tag(out, ref)
 
 def calculate_hash(file_path: str, algorithm: str = "sha256") -> str:
     """Calculate hash of evidence file"""
@@ -50,20 +64,28 @@ def calculate_hash(file_path: str, algorithm: str = "sha256") -> str:
         with open(file_path, 'rb') as f:
             for chunk in iter(lambda: f.read(65536), b''):
                 h.update(chunk)
-        _audit("hash", path=file_path, algorithm=algorithm, digest=h.hexdigest())
-        return f"{algorithm.upper()}: {h.hexdigest()}"
+        ref = _audit("hash", path=file_path, algorithm=algorithm, digest=h.hexdigest())
+        return _tag(f"{algorithm.upper()}: {h.hexdigest()}", ref)
     except (OSError, ValueError) as e:
         return f"ERROR: {e}"
 
 def search_iocs(path: str, pattern: str) -> str:
     """Search for IOCs in a file"""
-    return grep_tree(pattern, path)
+    out = grep_tree(pattern, path)
+    ref = _audit("grep", path=path, pattern=pattern, blocked=_failed(out),
+                 output_sha256=hashlib.sha256(out.encode()).hexdigest())
+    return _tag(out, ref)
 
-def write_finding(finding_type: str, description: str, evidence_source: str, confidence: str, artifact_timestamp: str = "") -> str:
-    """Record a confirmed forensic finding"""
-    f = {"id": f"F{len(findings)+1:03d}", "logged_at": datetime.datetime.now(datetime.timezone.utc).isoformat(), "artifact_timestamp": artifact_timestamp, "type": finding_type, "description": description, "evidence_source": evidence_source, "confidence": confidence}
+def write_finding(finding_type: str, description: str, evidence_source: str, confidence: str, evidence_ref: str, artifact_timestamp: str = "") -> str:
+    """Record a confirmed forensic finding. evidence_ref must be the [evidence_ref: Exxxx] tag from the tool output that supports it."""
+    entry = next((e for e in audit_trail if e.get("ref") == evidence_ref), None)
+    if entry is None or entry["event"] not in _GROUNDING_EVENTS or entry.get("blocked"):
+        _audit("finding_rejected", evidence_ref=evidence_ref, type=finding_type)
+        logger.warning("finding REJECTED (ungrounded) ref=%r type=%s", evidence_ref, finding_type)
+        return f"REJECTED: evidence_ref {evidence_ref!r} does not match a successful tool call. Re-run the tool and cite its [evidence_ref]."
+    f = {"id": f"F{len(findings)+1:03d}", "logged_at": datetime.datetime.now(datetime.timezone.utc).isoformat(), "artifact_timestamp": artifact_timestamp, "type": finding_type, "description": description, "evidence_source": evidence_source, "confidence": confidence, "evidence_ref": evidence_ref}
     findings.append(f)
-    _audit("finding", id=f["id"], type=finding_type, evidence_source=evidence_source)
+    _audit("finding", id=f["id"], type=finding_type, evidence_source=evidence_source, evidence_ref=evidence_ref)
     logger.info(f"FINDING [{f['id']}] [{confidence.upper()}] {finding_type}: {description[:80]}")
     return f"Recorded {f['id']}"
 
@@ -83,7 +105,7 @@ Analyze forensic evidence across 6 phases:
 6. REPORT - Timeline, MITRE ATT&CK TTPs, remediation
 
 Rules:
-- Call write_finding() for EVERY confirmed artifact
+- Call write_finding() for EVERY confirmed artifact, citing the [evidence_ref: Exxxx] printed at the end of the tool output that supports it. Findings without a valid ref are REJECTED
 - Call self_correct() when findings contradict each other
 - Label confidence: high/medium/low
 - Distinguish CONFIRMED vs INFERRED"""
