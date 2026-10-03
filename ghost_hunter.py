@@ -8,11 +8,19 @@ Author: Jhayke Sales
 import datetime
 import json
 import os
+from functools import lru_cache
 from pathlib import Path
 
 from groq import Groq
 
-client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+
+@lru_cache(maxsize=1)
+def get_client() -> Groq:
+    """Create the Groq client lazily so importing this module needs no API key."""
+    key = os.environ.get("GROQ_API_KEY")
+    if not key:
+        raise RuntimeError("GROQ_API_KEY is not set")
+    return Groq(api_key=key)
 
 # Known APT group signatures
 APT_SIGNATURES = {
@@ -115,7 +123,7 @@ def run_ghost_hunter(sentinel_findings: dict, case_name: str = "CASE-001"):
     evidence_str = json.dumps(sentinel_findings, indent=2)
     scores_str = json.dumps(scores, indent=2)
     
-    resp = client.chat.completions.create(
+    resp = get_client().chat.completions.create(
         model='llama-3.3-70b-versatile',
         messages=[{'role': 'user', 'content': f'''You are GHOST HUNTER, an autonomous APT Attribution Engine integrated with SENTINEL DFIR.
 
