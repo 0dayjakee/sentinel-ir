@@ -16,9 +16,7 @@ def _load(monkeypatch):
     google.generativeai = genai  # type: ignore[attr-defined]
     monkeypatch.setitem(sys.modules, "google", google)
     monkeypatch.setitem(sys.modules, "google.generativeai", genai)
-    spec = importlib.util.spec_from_file_location(
-        "sentinel_legacy", Path("sentinel_legacy.py")
-    )
+    spec = importlib.util.spec_from_file_location("sentinel_legacy", Path("sentinel_legacy.py"))
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)  # type: ignore[union-attr]
     return mod
@@ -86,9 +84,7 @@ def test_finding_rejected_with_unknown_ref(monkeypatch):
 
 def test_finding_rejected_when_cited_call_was_blocked(monkeypatch):
     mod = _load(monkeypatch)
-    out = mod.run_volatility(
-        "relative.raw", "windows.pslist"
-    )  # BLOCKED, hindi tumatakbo ang vol
+    out = mod.run_volatility("relative.raw", "windows.pslist")  # BLOCKED, hindi tumatakbo ang vol
     assert out.startswith("BLOCKED")
     assert "evidence_ref" not in out
     ref = mod.audit_trail[-1]["ref"]
@@ -103,9 +99,7 @@ def test_finding_rejected_when_citing_a_finding_event(monkeypatch, tmp_path):
     ref = mod.calculate_hash(str(f)).rsplit("evidence_ref: ", 1)[1].rstrip("]")
     assert mod.write_finding("t", "d", "hash", "high", ref).startswith("Recorded")
     finding_ref = next(e["ref"] for e in mod.audit_trail if e["event"] == "finding")
-    assert mod.write_finding("t2", "d2", "x", "high", finding_ref).startswith(
-        "REJECTED"
-    )
+    assert mod.write_finding("t2", "d2", "x", "high", finding_ref).startswith("REJECTED")
 
 
 def test_finding_accepted_with_hash_ref(monkeypatch, tmp_path):

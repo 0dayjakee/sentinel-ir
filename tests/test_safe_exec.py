@@ -96,7 +96,4 @@ def test_vol_valid_call_passes_validation(monkeypatch, tmp_path):
 
     monkeypatch.setattr(safe_exec, "ALLOWED_ROOTS", (tmp_path.resolve(),))
     img = tmp_path / "x.raw"
-    assert (
-        safe_exec._validate(["vol", "-f", str(img), "windows.pslist", "--pid", "4"])
-        is None
-    )
+    assert safe_exec._validate(["vol", "-f", str(img), "windows.pslist", "--pid", "4"]) is None

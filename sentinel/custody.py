@@ -32,13 +32,10 @@ def prepare_case(case_name: str, root: Path | None = None) -> Path:
     log_path = case_dir / "audit.log"
     logger = logging.getLogger(LOGGER_NAME)
     if not any(
-        getattr(h, "baseFilename", None) == str(log_path.resolve())
-        for h in logger.handlers
+        getattr(h, "baseFilename", None) == str(log_path.resolve()) for h in logger.handlers
     ):
         handler = logging.FileHandler(log_path, encoding="utf-8")
-        handler.setFormatter(
-            logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
-        )
+        handler.setFormatter(logging.Formatter("%(asctime)s | %(levelname)s | %(message)s"))
         logger.addHandler(handler)
     return case_dir
 
@@ -54,9 +51,7 @@ def finalize(case_dir: Path, report: dict) -> Path:
     report_path = case_dir / "sentinel_report.json"
     report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
     lines = [
-        f"{sha256_file(p)}  {p.name}"
-        for p in (report_path, case_dir / "audit.log")
-        if p.exists()
+        f"{sha256_file(p)}  {p.name}" for p in (report_path, case_dir / "audit.log") if p.exists()
     ]
     (case_dir / "SHA256SUMS").write_text("\n".join(lines) + "\n", encoding="utf-8")
     return report_path

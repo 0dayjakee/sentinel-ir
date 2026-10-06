@@ -10,9 +10,7 @@ def _load(monkeypatch):
     groq = types.ModuleType("groq")
     groq.Groq = lambda **kw: object()  # type: ignore[attr-defined]
     monkeypatch.setitem(sys.modules, "groq", groq)
-    spec = importlib.util.spec_from_file_location(
-        "ghost_hunter_mod", Path("ghost_hunter.py")
-    )
+    spec = importlib.util.spec_from_file_location("ghost_hunter_mod", Path("ghost_hunter.py"))
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)  # type: ignore[union-attr]
     return mod
