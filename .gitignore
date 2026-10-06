@@ -1,8 +1,27 @@
-.venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.egg-info/
+.eggs/
+.build/
+dist/
+build/
+
+# Virtual env
+.venv/
+venv/
+
+# Tooling caches
+.pytest_cache/
 .mypy_cache/
 .ruff_cache/
-.pytest_cache/
-sentinel_audit.log
+.coverage
+htmlcov/
+
+# OS/Editor
+.DS_Store
+.vscode/
+.idea/
+
+# Cases/output artifacts
+cases/
